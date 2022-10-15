@@ -73,6 +73,7 @@ namespace NTPTimeUP
 
         bool SetTimeCMD(string clock)
         {
+            // Start new CMD process as Administrator
             var process = new Process();
 
             process.StartInfo.Verb = "runas";
@@ -81,8 +82,9 @@ namespace NTPTimeUP
             process.StartInfo.RedirectStandardInput = true;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
-
             process.Start();
+
+            // Use time command to set the clock
             process.StandardInput.WriteLine("time");
             process.StandardInput.Flush();
 
@@ -90,6 +92,7 @@ namespace NTPTimeUP
             process.StandardInput.Flush();
             process.StandardInput.Close();
 
+            // Free all the resources on process
             process.Close();
 
             return true;
@@ -105,10 +108,6 @@ namespace NTPTimeUP
                 if (SetTimeCMD(clock))
                 {
                     MessageBox.Show("Horário sincronizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show("NTPTimeUP falhou ao configurar o horário correto", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch
