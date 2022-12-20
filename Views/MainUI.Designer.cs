@@ -54,7 +54,7 @@
             this.btnSyncNTP.TabIndex = 1;
             this.btnSyncNTP.Text = "Sincronizar com NTP";
             this.btnSyncNTP.UseVisualStyleBackColor = true;
-            this.btnSyncNTP.Click += new System.EventHandler(this.btnSyncNTP_Click);
+            this.btnSyncNTP.Click += new System.EventHandler(this.BtnSyncNTP_Click);
             // 
             // MainUI
             // 

@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net;
+using System;
 
 namespace NTPTimeUP
 {
     public partial class MainUI : Form
     {
-        public MainUI()
-        {
-            InitializeComponent();
-        }
+        Process? process;
+        private DateTime cachedNetworkTime;
+private bool hasCachedNetworkTime = false;
+
+        public MainUI() => InitializeComponent();
 
         static DateTime GetNetworkTime()
         {
@@ -73,16 +75,25 @@ namespace NTPTimeUP
 
         bool SetTimeCMD(string clock)
         {
-            // Start new CMD process as Administrator
-            var process = new Process();
+            // Validate the input clock value
+            if (!DateTime.TryParse(clock, out DateTime dateTime))
+            {
+                Console.WriteLine("Invalid clock value");
+                return false;
+            }
 
-            process.StartInfo.Verb = "runas";
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.UseShellExecute = false;
-            process.Start();
+            // If the process has not been created yet, create it
+            if (process == null)
+            {
+                process = new Process();
+                process.StartInfo.Verb = "runas";
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.Start();
+            }
 
             // Use time command to set the clock
             process.StandardInput.WriteLine("time");
@@ -98,11 +109,22 @@ namespace NTPTimeUP
             return true;
         }
 
-        private void btnSyncNTP_Click(object sender, EventArgs e)
+        private void BtnSyncNTP_Click(object sender, EventArgs e)
         {
             try
             {
-                var dateTime = GetNetworkTime();
+                DateTime dateTime;
+                if (!hasCachedNetworkTime)
+                {
+                    dateTime = GetNetworkTime();
+                    cachedNetworkTime = dateTime;
+                    hasCachedNetworkTime = true;
+                }
+                else
+                {
+                    dateTime = cachedNetworkTime;
+                }
+
                 var clock = dateTime.ToString("HH:mm:ss");
 
                 if (SetTimeCMD(clock))
@@ -114,7 +136,6 @@ namespace NTPTimeUP
             {
                 MessageBox.Show("Houve um erro ao buscar o horário correto, verifique sua conexão e tente novamente.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
         }
     }
 }
