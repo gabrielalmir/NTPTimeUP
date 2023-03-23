@@ -9,7 +9,7 @@ namespace NTPTimeUP
     {
         Process? process;
         private DateTime cachedNetworkTime;
-private bool hasCachedNetworkTime = false;
+        private bool hasCachedNetworkTime = false;
 
         public MainUI() => InitializeComponent();
 
