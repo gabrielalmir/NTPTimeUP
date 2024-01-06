@@ -3,6 +3,7 @@ package ntptime
 import (
 	"encoding/binary"
 	"fmt"
+	"log"
 	"net"
 	"os/exec"
 	"strings"
@@ -76,13 +77,15 @@ func SyncLocalTime(ntpServer string, ntpPort string, skipApply bool) {
 	localTime, err := getNetworkTime(ntpServer, ntpPort)
 
 	if err != nil {
-		panic("Cannot get the correct local time")
+		log.Fatalln("Cannot get the correct local time")
+
 	}
 
 	// Format in Hour and Minute only
 	timeInClock := fmt.Sprintf("%02d:%02d", localTime.Hour(), localTime.Minute())
 	systemTimeInClock := fmt.Sprintf("%02d:%02d", systemTime.Hour(), systemTime.Minute())
 
+	println("# NTP:", ntpServer, "Port:", ntpPort)
 	println("# Current Time:", systemTimeInClock)
 	println("# Correct Time:", timeInClock)
 
