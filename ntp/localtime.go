@@ -10,10 +10,7 @@ import (
 	"time"
 )
 
-func getNetworkTime() (time.Time, error) {
-	const ntpServer = "a.st1.ntp.br"
-	const ntpPort = "123"
-
+func getNetworkTime(ntpServer string, ntpPort string) (time.Time, error) {
 	conn, err := net.Dial("udp", net.JoinHostPort(ntpServer, ntpPort))
 	if err != nil {
 		return time.Time{}, err
@@ -53,7 +50,7 @@ func getNetworkTime() (time.Time, error) {
 
 func setTimeCMD(clock string) bool {
 	// Validate the input clock value
-	_, err := time.Parse("15:04", clock) // Use a specific time format for parsing
+	_, err := time.Parse("15:04", clock)
 	if err != nil {
 		fmt.Println("Invalid clock value")
 		return false
@@ -74,9 +71,9 @@ func setTimeCMD(clock string) bool {
 	return true
 }
 
-func SyncLocalTime(skipApply bool) {
+func SyncLocalTime(ntpServer string, ntpPort string, skipApply bool) {
 	systemTime := time.Now()
-	localTime, err := getNetworkTime()
+	localTime, err := getNetworkTime(ntpServer, ntpPort)
 
 	if err != nil {
 		panic("Cannot get the correct local time")
